@@ -1,3 +1,30 @@
+// var Game = function () {
+//   ...
+// }
+// Game.prototype = {
+//   init:  // 初始化
+//   restart: // 重新开始
+//   addSuccessFn:  // 成功进入下一步，执行外部函数, 用于更新分数
+//   addFailedFn: // 游戏失败, 执行外部函数, 用于显示失败弹窗
+//   _createJumper: // 创建 会跳的那个
+//   _createCube: // 创建方块
+//   _setLight: // Three.js设置光照
+//   _setCamera: // Three.js设置相机
+//   _setRenderer: // Three.js设置渲染器
+//   _render: // Three.js 执行渲染
+//   _createHelpers: // Three.js场景辅助工具
+//   _checkUserAgent: // 检测是否是移动端
+//   _handleWindowResize: // 窗口缩放绑定函数
+//   _handleMousedown: // 鼠标按下绑定函数
+//   _handleMouseup: // 鼠标松开绑定函数
+//   _fallingRotate: // 会跳的那个 摔落动画
+//   _falling: // 会跳的那个 摔落
+//   _checkInCube: // 判断落点位置
+//   _updateCameraPos: // 更新相机坐标参数
+//   _updateCamera: // 更新相机
+//   _setSize:   // 设置画布尺寸
+// }
+
 class Game {
     constructor() {
         this.config = {
