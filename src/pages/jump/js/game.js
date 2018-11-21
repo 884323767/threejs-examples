@@ -26,17 +26,18 @@
 // }
 
 class Game {
-    constructor() {
+    constructor(flag) {
+      this.flag = flag;
         this.config = {
             isMobile: false,
-            background: 0x282828, // 背景颜色
+            background: 0xe2e2e2, // 背景颜色
             ground: -1, // 地面y坐标
             fallingSpeed: 0.2, // 游戏失败掉落速度
             cubeColor: 0xbebebe,
             cubeWidth: 4, // 方块宽度
             cubeHeight: 2, // 方块高度
             cubeDeep: 4, // 方块深度
-            jumperColor: 0x232323,
+            jumperColor: 0x2fa1d6,
             jumperWidth: 1, // jumper宽度
             jumperHeight: 2, // jumper高度
             jumperDeep: 1 // jumper深度
@@ -125,6 +126,7 @@ class Game {
         }
         // 删除jumper
         this.scene.remove(this.jumper)
+        this.scene.remove(this.ball)
         // 显示的分数设为 0
         this.successCallback(this.score)
         this._createCube()
@@ -172,6 +174,7 @@ class Game {
     _handleMousedown() {
         if (!this.jumperStat.ready && this.jumper.scale.y > 0.02) {
             this.jumper.scale.y -= 0.01
+            this.ball.position.y -= 0.01* 2
             this.jumperStat.xSpeed += 0.004
             this.jumperStat.ySpeed += 0.008
             this._render(this.scene, this.camera)
@@ -189,14 +192,19 @@ class Game {
             // jumper根据下一个方块的位置来确定水平运动方向
             if (this.cubeStat.nextDir === 'left') {
                 this.jumper.position.x -= this.jumperStat.xSpeed
+                this.ball.position.x -= this.jumperStat.xSpeed
+
             } else {
                 this.jumper.position.z -= this.jumperStat.xSpeed
+                this.ball.position.z -= this.jumperStat.xSpeed
             }
             // jumper在垂直方向上运动
             this.jumper.position.y += this.jumperStat.ySpeed
+            this.ball.position.y += this.jumperStat.ySpeed
             // 运动伴随着缩放
             if (this.jumper.scale.y < 1) {
                 this.jumper.scale.y += 0.02
+                this.ball.position.y += 0.02* 2
             }
             // jumper在垂直方向上先上升后下降
             this.jumperStat.ySpeed -= 0.01
@@ -211,6 +219,7 @@ class Game {
             this.jumperStat.xSpeed = 0
             this.jumperStat.ySpeed = 0
             this.jumper.position.y = 1
+            this.ball.position.y = 1 + 3.5
             this._checkInCube()
             if (this.falledStat.location === 1) {
                 // 掉落成功，进入下一步
@@ -247,16 +256,19 @@ class Game {
             rotateAdd = this.jumper.rotation[rotateAxis] + 0.1
             rotateTo = this.jumper.rotation[rotateAxis] < Math.PI / 2
             this.jumper.geometry.translate.z = -offset
+            this.ball.geometry.translate.z = -offset
         } else if (dir === 'leftBottom') {
             rotateAxis = 'z'
             rotateAdd = this.jumper.rotation[rotateAxis] - 0.1
             rotateTo = this.jumper.rotation[rotateAxis] > -Math.PI / 2
             this.jumper.geometry.translate.x = -offset
+            this.ball.geometry.translate.x = -offset
         } else if (dir === 'leftTop') {
             rotateAxis = 'z'
             rotateAdd = this.jumper.rotation[rotateAxis] + 0.1
             rotateTo = this.jumper.rotation[rotateAxis] < Math.PI / 2
             this.jumper.geometry.translate.x = offset
+            this.ball.geometry.translate.x = offset
         } else if (dir === 'none') {
             rotateTo = false
             fallingTo = this.config.ground
@@ -266,8 +278,10 @@ class Game {
         if (!this.fallingStat.end) {
             if (rotateTo) {
                 this.jumper.rotation[rotateAxis] = rotateAdd
+                this.ball.rotation[rotateAxis] = rotateAdd
             } else if (this.jumper.position.y > fallingTo) {
                 this.jumper.position.y -= this.config.fallingSpeed
+                this.ball.position.y -= this.config.fallingSpeed
             } else {
                 this.fallingStat.end = true
             }
@@ -409,18 +423,55 @@ class Game {
     }
     // 初始化jumper：游戏主角
     _createJumper() {
-        const material = new THREE.MeshLambertMaterial({ color: this.config.jumperColor })
-        const geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
+        const material = new THREE.MeshLambertMaterial({ color: this.config.jumperColor ,
+        wireframe:this.flag
+      })
+
+        const  geometry = new THREE.CylinderGeometry(0.7, 0.7, 2.5, 40, 40)
+
+        // const geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
         geometry.translate(0, 1, 0)
         const mesh = new THREE.Mesh(geometry, material)
         mesh.position.y = 1
         this.jumper = mesh
+
+        var sphereGeo = new THREE.SphereGeometry(0.6, 40, 40);//创建球体
+        var sphereMat = new THREE.MeshLambertMaterial({//创建材料
+                    color:0x2fa1d6,
+                    wireframe:this.flag
+                });
+
+        this.ball  = new THREE.Mesh(sphereGeo, sphereMat);//创建球体网格模型
+        this.ball.position.set(0, 4.5, 0);//设置球的坐标
+        this.scene.add(this.ball);//将球体添加到场景
+
         this.scene.add(this.jumper)
     }
     // 新增一个方块, 新的方块有2个随机方向
     _createCube() {
-        const material = new THREE.MeshLambertMaterial({ color: this.config.cubeColor })
-        const geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
+      // 本别为 蓝色系
+      // 粉色系
+      // 橙色系
+      // 橘色系
+        const color =  [
+        '0xDCE8FC', '0xC2D9FF', '0xA3C8FD', '0x7FAEFC'
+        ,'0xFDE6EE', '0xFFB7D1', '0xFF88B2',
+        '0xffe5b2', '0xffdd95', '0xfad27d', '0xfcbe76', '0xf9b267',
+        '0xFFBA95', '0xFFBA95', '0xFFC8A9', '0xFFD5BE'
+        ]
+        const random1 = parseInt(Math.random() * 15);
+        var colorActive = parseInt(color[random1]);
+        const material = new THREE.MeshLambertMaterial({ color: colorActive,
+        wireframe:this.flag })
+        console.log(color[random1])
+        debugger;
+        let geometry;
+        if(Math.random() > 0.5) {
+          geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
+        } else {
+          geometry = new THREE.CylinderGeometry(2.5, 2.5, 2.5, 40, 40)
+
+        }
         const mesh = new THREE.Mesh(geometry, material)
         if (this.cubes.length) {
             const random = Math.random()
@@ -445,8 +496,12 @@ class Game {
             this._updateCameraPos()
         }
     }
+
+    // degInRad(deg) {
+    //   return deg * Math.PI/180;
+    // }
     _render() {
-        this.renderer.render(this.scene, this.camera)
+      this.renderer.render(this.scene, this.camera)
     }
     _setLight() {
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
