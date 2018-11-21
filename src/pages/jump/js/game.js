@@ -27,7 +27,7 @@
 
 class Game {
     constructor(flag) {
-      this.flag = flag;
+      this.flag = flag || false;
         this.config = {
             isMobile: false,
             background: 0xe2e2e2, // 背景颜色
@@ -174,7 +174,11 @@ class Game {
     _handleMousedown() {
         if (!this.jumperStat.ready && this.jumper.scale.y > 0.02) {
             this.jumper.scale.y -= 0.01
-            this.ball.position.y -= 0.01* 2
+            if(this.config.isMobile) {
+              this.ball.position.y -= 0.01* 2*0.7
+            } else {
+              this.ball.position.y -= 0.01* 2
+            }
             this.jumperStat.xSpeed += 0.004
             this.jumperStat.ySpeed += 0.008
             this._render(this.scene, this.camera)
@@ -219,7 +223,12 @@ class Game {
             this.jumperStat.xSpeed = 0
             this.jumperStat.ySpeed = 0
             this.jumper.position.y = 1
-            this.ball.position.y = 1 + 3.5
+            if(this.config.isMobile) {
+              this.ball.position.y = 4.5 *0.8
+
+            } else {
+              this.ball.position.y = 1 + 3.5
+            }
             this._checkInCube()
             if (this.falledStat.location === 1) {
                 // 掉落成功，进入下一步
@@ -426,8 +435,31 @@ class Game {
         const material = new THREE.MeshLambertMaterial({ color: this.config.jumperColor ,
         wireframe:this.flag
       })
+        let geometry;
+        let sphereGeo;
+        if(this.config.isMobile) {
+           geometry = new THREE.CylinderGeometry(0.7 *0.7, 0.7 *0.7, 2.5*0.7, 40, 40)
+           sphereGeo = new THREE.SphereGeometry(0.6 *0.7, 40, 40);//创建球体
+           var sphereMat = new THREE.MeshLambertMaterial({//创建材料
+                       color:0x2fa1d6,
+                       wireframe:this.flag
+                   });
 
-        const  geometry = new THREE.CylinderGeometry(0.7, 0.7, 2.5, 40, 40)
+           this.ball  = new THREE.Mesh(sphereGeo, sphereMat);//创建球体网格模型
+           this.ball.position.set(0, 4.5 * 0.8, 0);//设置球的坐标
+
+        } else {
+           geometry = new THREE.CylinderGeometry(0.7, 0.7, 2.5, 40, 40)
+           sphereGeo = new THREE.SphereGeometry(0.6, 40, 40);//创建球体
+           var sphereMat = new THREE.MeshLambertMaterial({//创建材料
+                       color:0x2fa1d6,
+                       wireframe:this.flag
+                   });
+
+           this.ball  = new THREE.Mesh(sphereGeo, sphereMat);//创建球体网格模型
+           this.ball.position.set(0, 4.5, 0);//设置球的坐标
+
+        }
 
         // const geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
         geometry.translate(0, 1, 0)
@@ -435,14 +467,7 @@ class Game {
         mesh.position.y = 1
         this.jumper = mesh
 
-        var sphereGeo = new THREE.SphereGeometry(0.6, 40, 40);//创建球体
-        var sphereMat = new THREE.MeshLambertMaterial({//创建材料
-                    color:0x2fa1d6,
-                    wireframe:this.flag
-                });
 
-        this.ball  = new THREE.Mesh(sphereGeo, sphereMat);//创建球体网格模型
-        this.ball.position.set(0, 4.5, 0);//设置球的坐标
         this.scene.add(this.ball);//将球体添加到场景
 
         this.scene.add(this.jumper)
@@ -466,12 +491,22 @@ class Game {
         console.log(color[random1])
         debugger;
         let geometry;
-        if(Math.random() > 0.5) {
-          geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
-        } else {
-          geometry = new THREE.CylinderGeometry(2.5, 2.5, 2.5, 40, 40)
+        if(this.config.isMobile) {
+          if(Math.random() > 0.5) {
+            geometry = new THREE.CubeGeometry(this.config.cubeWidth * 0.7, this.config.cubeHeight * 0.7, this.config.cubeDeep  * 0.7)
+          } else {
+            geometry = new THREE.CylinderGeometry(2.5 * 0.7, 2.5* 0.7, 2.5 * 0.7, 40 , 40 )
 
+          }
+        } else {
+          if(Math.random() > 0.5) {
+            geometry = new THREE.CubeGeometry(this.config.cubeWidth, this.config.cubeHeight, this.config.cubeDeep)
+          } else {
+            geometry = new THREE.CylinderGeometry(2.5, 2.5, 2.5, 40, 40)
+
+          }
         }
+
         const mesh = new THREE.Mesh(geometry, material)
         if (this.cubes.length) {
             const random = Math.random()
@@ -501,7 +536,12 @@ class Game {
     //   return deg * Math.PI/180;
     // }
     _render() {
-      this.renderer.render(this.scene, this.camera)
+      // requestAnimationFrame(() => {
+      //     this._render()
+      // })
+      setTimeout(()=> {
+        this.renderer.render(this.scene, this.camera)
+      }, 0)
     }
     _setLight() {
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);
