@@ -43,6 +43,7 @@ class Game {
             jumperDeep: 1 // jumper深度
         }
         // 游戏状态
+        this.timer = 0;
         this.score = 0
         this.size = {
             width: window.innerWidth,
@@ -464,7 +465,7 @@ class Game {
         // const geometry = new THREE.CubeGeometry(this.config.jumperWidth, this.config.jumperHeight, this.config.jumperDeep)
         geometry.translate(0, 1, 0)
         const mesh = new THREE.Mesh(geometry, material)
-        mesh.position.y = 1
+        mesh.position.y = 1.5
         this.jumper = mesh
 
 
@@ -489,7 +490,6 @@ class Game {
         const material = new THREE.MeshLambertMaterial({ color: colorActive,
         wireframe:this.flag })
         console.log(color[random1])
-        debugger;
         let geometry;
         if(this.config.isMobile) {
           if(Math.random() > 0.5) {
@@ -522,7 +522,7 @@ class Game {
         }
         this.cubes.push(mesh)
         // 当方块数大于6时，删除前面的方块，因为不会出现在画布中
-        if (this.cubes.length > 6) {
+        if (this.cubes.length > 4) {
             this.scene.remove(this.cubes.shift())
         }
         this.scene.add(mesh)
@@ -539,9 +539,11 @@ class Game {
       // requestAnimationFrame(() => {
       //     this._render()
       // })
-      setTimeout(()=> {
-        this.renderer.render(this.scene, this.camera)
-      }, 0)
+      this.renderer.render(this.scene, this.camera)
+
+      // this.timer = setInterval(()=> {
+      //   this.renderer.render(this.scene, this.camera)
+      // }, 0)
     }
     _setLight() {
         const directionalLight = new THREE.DirectionalLight(0xffffff, 1.1);

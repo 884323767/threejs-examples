@@ -1,10 +1,5 @@
 <template>
     <div class="container">
-        <div class="info">
-            <img src="static/img/logo.png" alt="Three.js Examples" class="logo">
-            <a href="https://github.com/luosijie/threejs-examples" target="_blank" class="title">Three.js Example</a>
-            <a href="https://luosijie.github.io/" target="_blank" class="author">Jesse Luo</a>
-        </div>
         <div class="works">
             <div v-for="(item, index) in workList" :key="index">
                 <router-link :to="item.link">

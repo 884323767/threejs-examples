@@ -12,14 +12,13 @@
       </div>
     </div>
     <div class="info">
-      <a class="title" href="avascript:void()" target="_blank">
-              Jump
-            </a>
-      <a class="author" href="javascript:void()" target="_blank">
-              For Game
-            </a>
       <div class="score-gaming">
-        得分：<span class="score-current">{{score}}</span>
+        你的得分：<span class="score-current">{{score}}</span>
+      </div>
+      <div class="show-line">
+        <button class="show" @click="show">
+          显示结构
+        </button>
       </div>
     </div>
     <canvas />
@@ -32,7 +31,8 @@ export default {
     return {
       game: null,
       score: 0,
-      finalPanelShow: false
+      finalPanelShow: false,
+      flag: false,
     }
   },
   watch: {
@@ -62,13 +62,21 @@ export default {
       this.score = this.game.score
       this.finalPanelShow = true
     },
+    show() {
+      this.game = null;
+      this.flag = !this.flag;
+      this.game = new Game(this.flag);
+      this.game.addSuccessFn(this.success)
+      this.game.addFailedFn(this.failed)
+      this.game.init()
+    },
     // 游戏成功，更新分数
     success(score) {
       this.score = score
     }
   },
   mounted() {
-    this.game = new Game()
+    this.game = new Game(this.flag)
     this.game.addSuccessFn(this.success)
     this.game.addFailedFn(this.failed)
     this.game.init()
@@ -172,8 +180,10 @@ a.title {
 
 .score-gaming {
   margin-top: 10px;
-  color: rgba(255, 255, 255, 1);
-  font-size: 16px;
+  color: #000;
+  font-size: 28px;
+  /* text-align: left; */
+  font-weight: bold;
 }
 
 </style>
