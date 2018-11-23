@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <TimeDom :date="dateSelet" :index="4"></TimeDom>
     <div class="mask" v-if="finalPanelShow">
       <div class="content">
         <div class="score-container">
@@ -26,6 +27,7 @@
 </template>
 <script>
 import Game from './js/game.js';
+import TimeDom from '@/components/time.vue';
 export default {
   data() {
     return {
@@ -33,7 +35,11 @@ export default {
       score: 0,
       finalPanelShow: false,
       flag: false,
+      dateSelet: new Date('2018/02/14')
     }
+  },
+  components: {
+    TimeDom,
   },
   watch: {
     score(val) {
