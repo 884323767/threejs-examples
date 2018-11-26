@@ -1,13 +1,30 @@
 <template>
   <div class="container">
-    <TimeDom :date="dateSelet" :index="4"></TimeDom>
-    <div class="mask" v-if="finalPanelShow">
+    <TimeDom ref="time"
+      v-if="showTime"
+      :date="dateSelet"
+      :index="4"
+    ></TimeDom>
+    <Comment v-if="showComment"></Comment>
+    <div
+      class="birth"
+      v-if="showImage"
+    >
+      <div class="b-img "></div>
+    </div>
+    <div
+      class="mask"
+      v-if="finalPanelShow"
+    >
       <div class="content">
         <div class="score-container">
           <p class="title">本次得分</p>
           <p class="score">{{score}}</p>
         </div>
-        <button class="restart" @click="restart">
+        <button
+          class="restart"
+          @click="restart"
+        >
           重新开始
         </button>
       </div>
@@ -16,9 +33,66 @@
       <div class="score-gaming">
         你的得分：<span class="score-current">{{score}}</span>
       </div>
-      <div class="show-line">
-        <button class="show" @click="show">
+      <div
+        class="show-line"
+        v-if="!istest"
+      >
+        <button
+          class="show"
+          @click="clickStruct"
+          v-if="flag"
+        >
+          close Struct
+        </button>
+        <button
+          class="show"
+          @click="clickTime"
+          v-if="showTime"
+        >
+          close Time
+        </button>
+        <button
+          class="show"
+          @click="clickComment"
+          v-if="showComment"
+        >
+          close Story
+        </button>
+        <button
+          class="show"
+          @click="clickImage"
+          v-if="showImage"
+        >
+          close Image
+        </button>
+      </div>
+      <div
+        class="show-line"
+        v-show="istest"
+      >
+        <button
+          class="show"
+          @click="clickStruct"
+        >
           显示结构
+        </button>
+        <button
+          class="show"
+          @click="clickTime"
+        >
+          showTime
+        </button>
+        <button
+          class="show"
+          @click="clickComment"
+        >
+          showStory
+        </button>
+        <button
+          class="show"
+          @click="clickImage"
+        >
+          showImage
         </button>
       </div>
     </div>
@@ -28,32 +102,43 @@
 <script>
 import Game from './js/game.js';
 import TimeDom from '@/components/time.vue';
+import Comment from '@/components/comment.vue';
 export default {
   data() {
     return {
       game: null,
       score: 0,
+      istest: false,
       finalPanelShow: false,
       flag: false,
+      showTime: false,
+      struct: false,
+      showComment: false,
+      showImage: false,
       dateSelet: new Date('2018/02/14')
     }
   },
   components: {
     TimeDom,
+    Comment,
   },
   watch: {
     score(val) {
-      if (val > 1) {
+      if (val == 2) {
         console.log('不错')
-      } else if (val > 5) {
+        this.clickTime();
+      } else if (val == 4) {
         console.log('很不错')
-      } else if (val > 10) {
+        this.clickImage();
+      } else if (val == 6) {
+        this.clickComment();
         console.log('超不错')
-      } else if (val > 15) {
-        console.log('相当不错')
-      } else if (val > 20) {
-        console.log('超神')
-      }
+      } else if (val == 8) {
+        console.log('不错')
+        this.clickTime(new Date('2018/11/28'));
+      } else if (val == 10) {
+        this.clickStruct();
+        console.log('相当不错')      }
     },
   },
   methods: {
@@ -68,13 +153,41 @@ export default {
       this.score = this.game.score
       this.finalPanelShow = true
     },
-    show() {
+    clickStruct() {
       this.game = null;
       this.flag = !this.flag;
       this.game = new Game(this.flag);
       this.game.addSuccessFn(this.success)
       this.game.addFailedFn(this.failed)
       this.game.init()
+    },
+    clickComment() {
+      this.showComment = !this.showComment;
+    },
+    clickTime(val) {
+      if(val) {
+        this.dateSelet = val;
+      } else {
+        this.dateSelet = new Date('2018/02/14')
+      }
+      this.showTime = !this.showTime;
+      this.$nextTick(()=>{
+        // debugger;
+        try {
+          this.$refs.time.updateDate();
+
+        } catch (e) {
+          console.log(e);
+        }
+
+      })
+    },
+    clickImage() {
+      this.showImage = !this.showImage;
+      // if(this.showImage) {
+      //   $('.birth').addClass('bounceOutLeft');
+
+      // }
     },
     // 游戏成功，更新分数
     success(score) {
@@ -86,6 +199,11 @@ export default {
     this.game.addSuccessFn(this.success)
     this.game.addFailedFn(this.failed)
     this.game.init()
+    this.$nextTick(() => {
+      // this.clickTime();
+
+      // this.showComment = true;
+    })
   }
 }
 
@@ -99,6 +217,20 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.birth {
+
+}
+
+.b-img {
+  background: url(../../assets/birthday.png) center no-repeat;
+  background-size: contain;
+  height: 80%;
+  position: absolute;
+  width: 80%;
+  right: 40px;
+  transform: rotate(270deg);
 }
 
 body {
@@ -131,6 +263,12 @@ body {
   border: 5px solid rgba(255, 255, 255, 0.05);
 }
 
+.show-line {
+ margin:50px;
+ button {
+  margin: 10px;
+ }
+}
 .score-container {
   color: #ffffff;
   text-align: center;
