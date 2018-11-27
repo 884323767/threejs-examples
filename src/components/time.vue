@@ -37,6 +37,7 @@
               </span>
               <!-- <span style="color:#ef9700">/&nbsp;</span><span id="second" class="time-font"></span> -->
             </p>
+
             <p>
               year/month/date
             </p>
@@ -67,7 +68,7 @@
 <script>
 import countTime from "@/utils/count-time.js"
 export default {
-  name: 'HelloWorld',
+  name: 'HelloWorld12',
   data() {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -78,6 +79,14 @@ export default {
       sayMsg:'我们第一次打招呼',
       saysObj:{
         "2018/2/14" : "我们第一次打招呼",
+        "2018/3/14" : "喵喵喵，你输给了我，内心超级开心",
+        "2018/4/29" : "武汉，第一次见到你",
+        "2018/5/19" : "广州, 第二次见到你",
+        "2018/6/13" : "深圳, 第三次见到你",
+        "2018/9/7" : "深圳, 第四次见到你",
+        "2018/9/24" : "我买下了你，其实早就想买你了，终于买到了",
+        "2018/9/26" : "和你一起接你家人,好紧张的",
+        "2018/10/27" : "你终于还是回家了,好好休养",
         "2018/11/28" : "天齐,祝你生日快乐, 我最喜欢你了",
       }
     }
@@ -93,23 +102,23 @@ export default {
   },
   watch: {
     date(val) {
-
+      // debugger;
     },
   },
   methods: {
-    updateDate() {
-      var val = this.date;
+    updateDate(data) {
+      var val =  data;
       var _this = this;
-      debugger;
+      // debugger;
       $(function() {
         //设置起始日期
-        debugger;
+        // debugger;
 
         _this.dateString = `${val.getFullYear()}/${val.getMonth() + 1}/${val.getDate()}`;
-        if(_this.dateString == '2018/2/14') {
-          return;
-        }
-        countTime(`${_this.dateString} 17:15`, 'day', 'hour', 'minute', 'second');
+        // if(_this.dateString == '2018/2/14') {
+        //   return;
+        // }
+        countTime(`${_this.dateString}`, 'day', 'hour', 'minute', 'second');
         var days = $('#day').text() || 0;
         // 设置标题
         if (parseInt(days / 365) != 0) {

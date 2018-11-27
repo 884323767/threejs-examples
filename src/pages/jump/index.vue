@@ -1,17 +1,25 @@
 <template>
   <div class="container">
-    <TimeDom ref="time"
+    <TimeDom
+      ref="time"
       v-if="showTime"
       :date="dateSelet"
       :index="4"
     ></TimeDom>
     <Comment v-if="showComment"></Comment>
-    <div
+    <transition
+      name='fade'
+      enter-active-class='animated zoomOutLeft'
+      leave-active-class='animated zoomOutRight'
+    >
+      <!--     <div
       class="birth"
       v-if="showImage"
     >
       <div class="b-img "></div>
-    </div>
+    </div> -->
+      <div v-if='showImage'>hello world</div>
+    </transition>
     <div
       class="mask"
       v-if="finalPanelShow"
@@ -35,7 +43,7 @@
       </div>
       <div
         class="show-line"
-        v-if="!istest"
+        v-if="!showTest"
       >
         <button
           class="show"
@@ -43,6 +51,14 @@
           v-if="flag"
         >
           close Struct
+        </button>
+
+        <button
+          class="show"
+          @click="clickTime"
+          v-if="score > 1"
+        >
+          show Time
         </button>
         <button
           class="show"
@@ -53,34 +69,76 @@
         </button>
         <button
           class="show"
+          @click="clickTimeBrfore"
+          v-if="showTime"
+        >
+          Brfore Time
+        </button>
+        <button
+          class="show"
+          @click="clickTimeNext"
+          v-if="showTime"
+        >
+          Next Time
+        </button>
+        <button
+          class="show"
+          @click="clickTimeFirst"
+          v-if="showTime"
+        >
+          First Time
+        </button>
+        <button
+          class="show"
           @click="clickComment"
           v-if="showComment"
         >
           close Story
         </button>
-        <button
+<!--         <button
           class="show"
           @click="clickImage"
           v-if="showImage"
         >
           close Image
-        </button>
+        </button> -->
       </div>
       <div
         class="show-line"
-        v-show="istest"
+        v-show="showTest"
       >
         <button
           class="show"
           @click="clickStruct"
         >
-          显示结构
+          show Struct
         </button>
-        <button
+         <button
           class="show"
           @click="clickTime"
         >
-          showTime
+          show Time
+        </button>
+        <button
+          class="show"
+          @click="clickTimeBrfore"
+          v-if="showTime"
+        >
+          Brfore Time
+        </button>
+        <button
+          class="show"
+          @click="clickTimeNext"
+          v-if="showTime"
+        >
+          Next Time
+        </button>
+        <button
+          class="show"
+          @click="clickTimeFirst"
+          v-if="showTime"
+        >
+          First Time
         </button>
         <button
           class="show"
@@ -108,10 +166,12 @@ export default {
     return {
       game: null,
       score: 0,
-      istest: false,
+      showTest: false,
       finalPanelShow: false,
       flag: false,
       showTime: false,
+      timeList: ["2018/2/14", "2018/3/14", "2018/4/29", "2018/5/19", "2018/6/13", "2018/9/7", "2018/9/24", "2018/9/26", "2018/10/27", "2018/11/28"],
+      index: 0,
       struct: false,
       showComment: false,
       showImage: false,
@@ -124,21 +184,26 @@ export default {
   },
   watch: {
     score(val) {
-      if (val == 2) {
+      var const = 2;
+      if (val == 2 * const) {
         console.log('不错')
-        this.clickTime();
-      } else if (val == 4) {
+        this.clickTimeFuntction();
+
+      } else if (val == 4* const) {
         console.log('很不错')
-        this.clickImage();
-      } else if (val == 6) {
+        // this.clickTimeFuntction(new Date('2018/11/28'));
+
+        // this.clickImage();
+      } else if (val == 6* const) {
         this.clickComment();
         console.log('超不错')
-      } else if (val == 8) {
+      } else if (val == 8* const) {
         console.log('不错')
-        this.clickTime(new Date('2018/11/28'));
-      } else if (val == 10) {
+        this.clickTimeFuntction(new Date('2018/11/28'));
+      } else if (val == 10* const) {
         this.clickStruct();
-        console.log('相当不错')      }
+        console.log('相当不错')
+      }
     },
   },
   methods: {
@@ -153,6 +218,51 @@ export default {
       this.score = this.game.score
       this.finalPanelShow = true
     },
+    hideTest(test) {
+      const keyCode = test.keyCode;
+      // ios 和 手机 这个~按键也可以
+      if (test === 27 || keyCode === 27 || keyCode === 192) {
+        this.showTest = !this.showTest;
+      }
+    },
+    clickTimeFirst() {
+      this.index = 0;
+      this.dateSelet = new Date(this.timeList[this.index]);
+      try {
+        this.$refs.time.updateDate(this.dateSelet);
+
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    clickTimeBrfore() {
+      console.log('clickTimeBrfore' , this.index , this.timeList[this.index])
+      // this.dateSelet =
+      if (this.index >= 1) {
+        this.index--;
+        this.dateSelet = new Date(this.timeList[this.index]);
+        try {
+          this.$refs.time.updateDate(this.dateSelet);
+
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    },
+    clickTimeNext() {
+      console.log('clickTimeNext' , this.index , this.timeList[this.index])
+
+      if (this.index <= this.timeList.length - 2) {
+        this.index++;
+        this.dateSelet = new Date(this.timeList[this.index]);
+        try {
+          this.$refs.time.updateDate(this.dateSelet);
+
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    },
     clickStruct() {
       this.game = null;
       this.flag = !this.flag;
@@ -164,23 +274,26 @@ export default {
     clickComment() {
       this.showComment = !this.showComment;
     },
-    clickTime(val) {
-      if(val) {
+    clickTimeFuntction(val) {
+      if (val) {
         this.dateSelet = val;
       } else {
         this.dateSelet = new Date('2018/02/14')
       }
       this.showTime = !this.showTime;
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         // debugger;
         try {
-          this.$refs.time.updateDate();
+          this.$refs.time.updateDate(this.dateSelet);
 
         } catch (e) {
           console.log(e);
         }
 
       })
+    },
+    clickTime() {
+      this.clickTimeFuntction();
     },
     clickImage() {
       this.showImage = !this.showImage;
@@ -201,7 +314,9 @@ export default {
     this.game.init()
     this.$nextTick(() => {
       // this.clickTime();
-
+      setTimeout(() => {
+        document.onkeydown = this.hideTest;
+      }, 200);
       // this.showComment = true;
     })
   }
@@ -264,6 +379,8 @@ body {
 }
 
 .show-line {
+  display: flex;
+flex-direction: row;
  margin:50px;
  button {
   margin: 10px;

@@ -53,11 +53,17 @@ var diff;
  * @param  {[type]} s      [description]
  * @return {[type]}        [description]
  */
- var countTime = function (target, d, h, m, s) {
- 	var cur = new Date().getTime();
+ var countTime = function (target, d, h, m, s, curTime) {
+  var cur = new Date(target).getTime();
+  if(target == '2018/11/28') {
+    cur = new Date().getTime();
+  }
+  if(target == '2018/2/14') {
+    cur = new Date('2018/02/14 17:15').getTime();
+  }
  	var his = new Date('2018/02/14 17:15').getTime();
  	diff = calcDifference(cur - his);
-  debugger;
+  // debugger;
  	_countTime(d, h, m, s);
  	// setInterval(function() {
  		// _countTime(d, h, m, s);
