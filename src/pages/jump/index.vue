@@ -12,13 +12,13 @@
       enter-active-class='animated zoomOutLeft'
       leave-active-class='animated zoomOutRight'
     >
-      <!--     <div
+          <div
       class="birth"
       v-if="showImage"
     >
       <div class="b-img "></div>
-    </div> -->
-      <div v-if='showImage'>hello world</div>
+    </div>
+      <!-- <div v-if='showImage'>hello world</div> -->
     </transition>
     <div
       class="mask"
@@ -56,7 +56,7 @@
         <button
           class="show"
           @click="clickTime"
-          v-if="score > 1"
+          v-if="score > 3"
         >
           show Time
         </button>
@@ -170,7 +170,7 @@ export default {
       finalPanelShow: false,
       flag: false,
       showTime: false,
-      timeList: ["2018/2/14", "2018/3/14", "2018/4/29", "2018/5/19", "2018/6/13", "2018/9/7", "2018/9/24", "2018/9/26", "2018/10/27", "2018/11/28"],
+      timeList: ["2018/2/14", "2018/3/14", "2018/4/29", "2018/5/19", "2018/6/13", "2018/9/7", "2018/9/24", "2018/9/26", "2018/10/13", "2018/10/27", "2018/11/28"],
       index: 0,
       struct: false,
       showComment: false,
@@ -184,23 +184,30 @@ export default {
   },
   watch: {
     score(val) {
-      var const = 2;
-      if (val == 2 * const) {
+      var rate = 2;
+      if (val == 2 * rate) {
         console.log('不错')
         this.clickTimeFuntction();
 
-      } else if (val == 4* const) {
+      } else if (val == 4* rate) {
         console.log('很不错')
         // this.clickTimeFuntction(new Date('2018/11/28'));
 
         // this.clickImage();
-      } else if (val == 6* const) {
         this.clickComment();
         console.log('超不错')
-      } else if (val == 8* const) {
+      } else if (val == 6* rate) {
+        // this.clickComment();
+        // console.log('超不错')
+
         console.log('不错')
         this.clickTimeFuntction(new Date('2018/11/28'));
-      } else if (val == 10* const) {
+      } else if (val == 8* rate) {
+        this.clickStruct();
+        console.log('相当不错')
+        // console.log('不错')
+        // this.clickTimeFuntction(new Date('2018/11/28'));
+      } else if (val == 10* rate) {
         this.clickStruct();
         console.log('相当不错')
       }
