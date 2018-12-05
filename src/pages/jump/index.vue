@@ -41,6 +41,22 @@
       <div class="score-gaming">
         你的得分：<span class="score-current">{{score}}</span>
       </div>
+      <div class="show-line">
+        <button
+          class="show"
+          @click="clickShowLove"
+          v-if="showLove"
+        >
+          surprise mode
+        </button>
+        <button
+          class="show"
+          @click="clickShowLove"
+          v-else
+        >
+         normal mode
+        </button>
+      </div>
       <div
         class="show-line"
         v-if="!showTest"
@@ -56,7 +72,7 @@
         <button
           class="show"
           @click="clickTime"
-          v-if="score > 3"
+          v-if="score > 3 && showLove"
         >
           show Time
         </button>
@@ -172,6 +188,7 @@ export default {
       showTime: false,
       timeList: ["2018/2/14", "2018/3/14", "2018/4/29", "2018/5/19", "2018/6/13", "2018/9/7", "2018/9/24", "2018/9/26", "2018/10/13", "2018/10/27", "2018/11/28"],
       index: 0,
+      showLove: false,
       struct: false,
       showComment: false,
       showImage: false,
@@ -184,32 +201,34 @@ export default {
   },
   watch: {
     score(val) {
-      var rate = 2;
-      if (val == 2 * rate) {
-        console.log('不错')
-        this.clickTimeFuntction();
+      if(this.showLove) {
+        var rate = 2;
+        if (val == 2 * rate) {
+          console.log('不错')
+          this.clickTimeFuntction();
 
-      } else if (val == 4* rate) {
-        console.log('很不错')
-        // this.clickTimeFuntction(new Date('2018/11/28'));
+        } else if (val == 4* rate) {
+          console.log('很不错')
+          // this.clickTimeFuntction(new Date('2018/11/28'));
 
-        // this.clickImage();
-        this.clickComment();
-        console.log('超不错')
-      } else if (val == 6* rate) {
-        // this.clickComment();
-        // console.log('超不错')
+          // this.clickImage();
+          this.clickComment();
+          console.log('超不错')
+        } else if (val == 6* rate) {
+          // this.clickComment();
+          // console.log('超不错')
 
-        console.log('不错')
-        this.clickTimeFuntction(new Date('2018/11/28'));
-      } else if (val == 8* rate) {
-        this.clickStruct();
-        console.log('相当不错')
-        // console.log('不错')
-        // this.clickTimeFuntction(new Date('2018/11/28'));
-      } else if (val == 10* rate) {
-        this.clickStruct();
-        console.log('相当不错')
+          console.log('不错')
+          this.clickTimeFuntction(new Date('2018/11/28'));
+        } else if (val == 8* rate) {
+          this.clickStruct();
+          console.log('相当不错')
+          // console.log('不错')
+          // this.clickTimeFuntction(new Date('2018/11/28'));
+        } else if (val == 10* rate) {
+          this.clickStruct();
+          console.log('相当不错')
+        }
       }
     },
   },
@@ -281,6 +300,10 @@ export default {
     clickComment() {
       this.showComment = !this.showComment;
     },
+    clickShowLove() {
+      this.showLove = !this.showLove;
+    },
+
     clickTimeFuntction(val) {
       if (val) {
         this.dateSelet = val;
